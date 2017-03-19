@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="${basepackage}.dao.${table.className}Mapper">
+
+	<resultMap id="${table.className}ResultMap" type="${table.variableName}">
+        <%
+		for(column in table.columns){
+		%>
+        <result property="${column.columnNameLower}" column="${column.sqlName}"/>
+		<%
+		}
+		%>
+	</resultMap>
+	
+	<sql id="${table.className}Columns">
+	    <![CDATA[
+		<%
+		for(column in table.columns){
+		%>
+        ${column.sqlName}<%if(!columnLP.last){%>,<%}%>
+		<%
+		}
+		%>
+	    ]]>
+	</sql>
+	
+	<!-- useGeneratedKeys="true" keyProperty="xxx" for sqlserver and mysql -->
+	<insert id="save" parameterType="${table.variableName}">
+    
+        INSERT INTO ${table.sqlName} (
+        <%
+		for(column in table.columns){
+		%>
+        ${column.sqlName}<%if(!columnLP.last){%>,<%}%>
+		<%
+		}
+		%>
+        ) VALUES (
+		<%
+		for(column in table.columns){
+		%>
+        #{${column.columnNameLower}}<%if(!columnLP.last){%>,<%}%>
+		<%
+		}
+		%>      
+        )
+    
+		<!--	
+			oracle: order="BEFORE" SELECT sequenceName.nextval AS ID FROM DUAL 
+			DB2: order="BEFORE"" values nextval for sequenceName
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="userId">
+			SELECT sequenceName.nextval AS ID FROM DUAL 
+        </selectKey>
+		-->
+	</insert>
+	
+	<insert id="saveBatch" parameterType="list">
+		
+        INSERT INTO ${table.sqlName} (
+       <%
+		for(column in table.columns){
+		%>
+        ${column.sqlName}<%if(!columnLP.last){%>,<%}%>
+		<%
+		}
+		%>
+        ) VALUES 
+		<foreach collection="list" index="i" item="item" separator=",">
+        (
+		<%
+		for(column in table.columns){
+		%>
+        #{item.${column.columnNameLower}}<%if(!columnLP.last){%>,<%}%>
+		<%
+		}
+		%>  
+		)        
+        </foreach>
+		
+    </insert>
+	
+	
+	<update id="update" parameterType="${table.variableName}">
+        
+        UPDATE ${table.sqlName} SET
+		<%
+		for(column in table.columns){
+		%>
+        <%if(!column.isPK){%>
+			${column.sqlName} = #{${column.columnNameLower}}<%if(!columnLP.last){%>,<%}%>
+		<%}%>
+		<%
+		}
+		%>
+        WHERE 
+		<%
+		for(column in table.columns){
+		%>
+        <%if(column.isPK){%>
+		${column.sqlName} = #{${column.columnNameLower}}
+		<%}%>
+		<%
+		}
+		%>       
+    
+    </update>
+	
+	<delete id="removeById">
+       
+        DELETE FROM ${table.sqlName} WHERE
+        <%
+		for(column in table.columns){
+		%>
+        <%if(column.isPK){%>
+		${column.sqlName} = #{${column.columnNameLower}}
+		<%}%>
+		<%
+		}
+		%>
+    
+    </delete>
+	
+	<select id="getById" resultMap="${table.className}ResultMap">
+	
+        SELECT 
+		<include refid="${table.className}Columns" />
+		    FROM ${table.sqlName} 
+	        WHERE 
+		<%
+		for(column in table.columns){
+		%>
+        <%if(column.isPK){%>
+		${column.sqlName} = #{${column.columnNameLower}}
+		<%}%>
+		<%
+		}
+		%> 
+	    
+    </select>
+	
+	<select id="list" resultMap="${table.className}ResultMap">
+	
+        SELECT
+		<include refid="${table.className}Columns" />	    
+		FROM ${table.sqlName} 
+	    
+    </select>
+</mapper>
