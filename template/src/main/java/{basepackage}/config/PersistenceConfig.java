@@ -1,4 +1,4 @@
-package com.shinsoft.config;
+package net.shinsoft.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -18,21 +18,22 @@ import java.sql.SQLException;
 
 @Configuration
 @EnableTransactionManagement
-@PropertySource({"classpath:db.properties"})
-@MapperScan("com.shinsoft.dao")
+@PropertySource({"classpath:config.properties"})
+@MapperScan("net.shinsoft.dao")
 public class PersistenceConfig {
 
     @Autowired
     private Environment env;
 
+
     //    druid
     @Bean
     public DataSource dataSource() {
         DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setDriverClassName(env.getProperty("sqlserver.driverClassName"));
-        dataSource.setUrl(env.getProperty("sqlserver.url"));
-        dataSource.setUsername(env.getProperty("sqlserver.username"));
-        dataSource.setPassword(env.getProperty("sqlserver.password"));
+        dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
+        dataSource.setUrl(env.getProperty("jdbc.url"));
+        dataSource.setUsername(env.getProperty("jdbc.username"));
+        dataSource.setPassword(env.getProperty("jdbc.password"));
 
         //初始化时建立物理连接的个数
         dataSource.setInitialSize(Integer.parseInt(env.getProperty("jdbc.initialSize")));
@@ -117,5 +118,6 @@ public class PersistenceConfig {
     public javax.validation.Validator localValidatorFactoryBean() {
         return new LocalValidatorFactoryBean();
     }
+
 
 }

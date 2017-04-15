@@ -1,65 +1,105 @@
-package com.shinsoft.config;
+package net.shinsoft.config;
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
+import net.shinsoft.common.Constant;
+import net.shinsoft.controller.filter.DefaultFilter;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Configuration
 @EnableWebMvc
-//@ComponentScan({"com.shinsoft.controller", "com.shinsoft.service"})
-@ComponentScan(value = {"com.shinsoft", "com.star.spring"}, excludeFilters = {@ComponentScan.Filter(type = FilterType
+@ComponentScan(value = {"net.shinsoft"}, excludeFilters = {@ComponentScan.Filter(type = FilterType
         .ANNOTATION,
         value = {Repository.class})})
-public class WebMVCConfig extends WebMvcConfigurerAdapter {
+public class WebMVCConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 
+    private ApplicationContext applicationContext;
 
-    private ServletContextTemplateResolver templateResolver() {
-        ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();
-        templateResolver.setPrefix("/WEB-INF/views/");
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addRedirectViewController("/", "/default");
+//        super.addViewControllers(registry);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(getDefaultFilter()).addPathPatterns(Constant.URI);
+    }
+
+    @Bean
+    public DefaultFilter getDefaultFilter() {
+        return new DefaultFilter();
+    }
+
+    private ITemplateResolver templateResolver() {
+        SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
+        templateResolver.setPrefix("/WEB-INF/templates/");
         templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode("HTML5");
-
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setApplicationContext(applicationContext);
+        templateResolver.setCacheable(false);
         return templateResolver;
     }
 
 
-    private SpringTemplateEngine templateEngine() {
+    private TemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
-
+        Set<IDialect> dialects = new HashSet<>(1);
+        dialects.add(new ShiroDialect());
+        templateEngine.setAdditionalDialects(dialects);
         return templateEngine;
     }
 
 
-    private ThymeleafViewResolver viewResolver() {
+    @Bean
+    public ViewResolver viewResolver() {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine());
+        viewResolver.setCharacterEncoding("UTF-8");
         viewResolver.setOrder(1);
         return viewResolver;
     }
@@ -67,7 +107,9 @@ public class WebMVCConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        //用shiro静态资源这么配不够的，详见shiroconfig
         registry.addResourceHandler("/resources/**").addResourceLocations("/WEB-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
     //动态选择MediaType
@@ -129,20 +171,21 @@ public class WebMVCConfig extends WebMvcConfigurerAdapter {
         views.add(new FastJsonJsonView());
         resolver.setDefaultViews(views);
 
-        List<ViewResolver> resolvers = new ArrayList<ViewResolver>();
+        List<ViewResolver> resolvers = new ArrayList<>();
         resolvers.add(viewResolver());
 
         resolver.setViewResolvers(resolvers);
         return resolver;
     }
 
-//    上传文件
-//    @Bean
-//    public MultipartResolver multipartResolver() {
-//        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-//        multipartResolver.setMaxUploadSize(-1);
-//        return multipartResolver;
-//    }
+    //    上传文件
+    @Bean
+    public MultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(-1);
+        return multipartResolver;
+    }
+
 
     //根据头来做国际化
 //    @Bean
