@@ -73,7 +73,7 @@ jdk_install(){
 }
   
 if [ ! -e /tmp/jdk.rpm ];then
-	wget -O /tmp/jdk.rpm --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u102-linux-x64.rpm"
+	wget -O /tmp/jdk.rpm --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.rpm"
 	jdk_install
 else
 	jdk_install
@@ -87,9 +87,9 @@ tomcat_install(){
 	tar -zxvf tomcat.tar.gz
 	if [ -e "/usr/tomcat" ];then  
 		rm -rf /usr/tomcat
-		mv "apache-tomcat-8.0.28" /usr/tomcat
+		mv "apache-tomcat-8.0.46" /usr/tomcat
 	else
-		mv "apache-tomcat-8.0.28" /usr/tomcat
+		mv "apache-tomcat-8.0.46" /usr/tomcat
 	fi 
 	rm -f tomcat.tar.gz
 
@@ -113,8 +113,8 @@ EOF
 		
 		[Service]
 		Type=forking
-		PIDFile=/data/tomcat/tomcat.pid
-		ExecStart=/data/tomcat/bin/startup.sh 
+		PIDFile=/usr/tomcat/tomcat.pid
+		ExecStart=/usr/tomcat/bin/startup.sh 
 		ExecReload=/bin/kill -s HUP \$MAINPID
 		ExecStop=/bin/kill -s QUIT \$MAINPID
 		PrivateTmp=true
@@ -130,7 +130,7 @@ EOF
 }
 
 if [ ! -e /tmp/tomcat.tar.gz ];then
-	wget -O /tmp/tomcat.tar.gz "http://mirrors.aliyun.com/apache/tomcat/tomcat-8/v8.0.28/bin/apache-tomcat-8.5.5.tar.gz"
+	wget -O /tmp/tomcat.tar.gz "http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.0.46/bin/apache-tomcat-8.0.46.tar.gz"
 	tomcat_install
 else
 	tomcat_install
