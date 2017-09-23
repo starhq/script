@@ -1,1 +1,1 @@
-#some init script
+#centos安装脚本
