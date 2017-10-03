@@ -1,1 +1,1 @@
-#centos安装脚本，测试mac
+#centos安装脚本，测试密码
