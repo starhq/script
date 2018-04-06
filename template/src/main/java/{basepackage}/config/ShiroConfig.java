@@ -1,4 +1,4 @@
-package net.shinsoft.config;
+package ${basepackage}.config;
 
 import net.shinsoft.shiro.CustomHashedCredentialsMatcher;
 import net.shinsoft.shiro.UserRealm;
@@ -21,7 +21,9 @@ import java.util.Map;
 import static org.apache.shiro.codec.Base64.decode;
 
 /**
- * Created by starhq on 2017/3/25.
+ * shiro配置
+ *
+<%include("/java_description.include"){}%>
  */
 @Configuration
 public class ShiroConfig {

@@ -1,4 +1,4 @@
-package net.shinsoft.config;
+package ${basepackage}.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -16,10 +16,15 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
+/**
+ * 持久化配置
+ *
+<%include("/java_description.include"){}%>
+ */
 @Configuration
 @EnableTransactionManagement
 @PropertySource({"classpath:config.properties"})
-@MapperScan("net.shinsoft.dao")
+@MapperScan("${basepackage}.dao")
 public class PersistenceConfig {
 
     @Autowired

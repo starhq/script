@@ -1,9 +1,16 @@
-package com.shinsoft.common;
+package com.star.common;
 
 /**
- * Created by starhq on 2016/10/26.
+ * 业务逻辑异常
+ *
+ * @author starhq(50849806 @ qq.com)
+ * @version 1.0
+ * @description
+ * @date 2018-04-06 18:40:36
  */
 public class BussinessException extends RuntimeException {
+
+    private static final long serialVersionUID = -647040740925304353L;
 
     public BussinessException() {
     }

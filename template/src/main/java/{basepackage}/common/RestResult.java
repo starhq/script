@@ -1,9 +1,17 @@
-package com.shinsoft.common;
+package ${basepackage}.common;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * restful结果
+ *
+ * @author starhq(50849806 @ qq.com)
+ * @version 1.0
+ * @description
+ * @date 2018-04-06 18:40:36
+ */
 public class RestResult implements Serializable {
     private static final long serialVersionUID = 1L;
     private Object data;

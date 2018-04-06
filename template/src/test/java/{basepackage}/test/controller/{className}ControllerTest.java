@@ -18,13 +18,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import ${basepackage}.pojo.${table.className};
-import ${basepackage}.controller.${table.className}ControllerImpl;
+import ${basepackage}.controller.${table.className}Controller;
 
 
 /**
  * ${table.className}的controller层单元测试
  */
-public class ${table.className}ControllerImplTest extends BaseTest{
+public class ${table.className}ControllerTest extends BaseTest{
 
 	@Autowired
 	private ${table.className}Controller ${table.variableName}Controller;

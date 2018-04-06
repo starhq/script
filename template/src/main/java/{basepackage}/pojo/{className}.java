@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.*;
 import javax.validation.constraints.*;
 
 /**
+ * 表${table.sqlName}
 <%include("/java_description.include"){}%>
  */
 @Data

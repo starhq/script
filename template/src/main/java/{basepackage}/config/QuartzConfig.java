@@ -1,4 +1,4 @@
-package net.shinsoft.config;
+package ${basepackage}.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,10 +10,12 @@ import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
- * Created by starhq on 2017/2/27.
+ * 定时任务配置
+ *
+<%include("/java_description.include"){}%>
  */
 @Configuration
-@ComponentScan("net.shinsoft.impl")
+@ComponentScan("${basepackage}.service.impl")
 public class QuartzConfig {
 
     @Autowired

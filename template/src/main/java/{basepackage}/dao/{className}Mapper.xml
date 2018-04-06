@@ -105,7 +105,7 @@
     
     </update>
 	
-	<delete id="removeById">
+	<delete id="remove">
        
         DELETE FROM ${table.sqlName} WHERE
         <%
@@ -120,7 +120,7 @@
     
     </delete>
 	
-	<select id="getById" resultMap="${table.className}ResultMap">
+	<select id="get" resultMap="${table.className}ResultMap">
 	
         SELECT 
 		<include refid="${table.className}Columns" />

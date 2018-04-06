@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.shinsoft.test.BaseTest;
+import ${basepackage}.test.BaseTest;
 
 import ${basepackage}.pojo.${table.className};
 import ${basepackage}.service.${table.className}Service;

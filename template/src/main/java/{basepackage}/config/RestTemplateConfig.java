@@ -1,4 +1,4 @@
-package net.shinsoft.config;
+package ${basepackage}.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by starhq on 2017/2/28.
+ * http池配置
+ *
+<%include("/java_description.include"){}%>
  */
 @Configuration
 public class RestTemplateConfig {

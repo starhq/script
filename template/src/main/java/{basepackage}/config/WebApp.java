@@ -1,4 +1,4 @@
-package net.shinsoft.config;
+package ${basepackage}.config;
 
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
@@ -7,6 +7,11 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+/**
+ * web.xml配置
+ *
+<%include("/java_description.include"){}%>
+ */
 public class WebApp extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     public WebApp() {

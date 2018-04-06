@@ -1,4 +1,4 @@
-package net.shinsoft.config;
+package ${basepackage}.config;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -44,9 +44,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * mvc配置
+ *
+<%include("/java_description.include"){}%>
+ */
 @Configuration
 @EnableWebMvc
-@ComponentScan(value = {"net.shinsoft"}, excludeFilters = {@ComponentScan.Filter(type = FilterType
+@ComponentScan(value = {"${basepackage}"}, excludeFilters = {@ComponentScan.Filter(type = FilterType
         .ANNOTATION,
         value = {Repository.class})})
 public class WebMVCConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
