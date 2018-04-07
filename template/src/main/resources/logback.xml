@@ -1,45 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-
+    <!-- 日志输出的根路径 -->
+    <property name="logger.logRoot" value="../logs"/>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+    <!-- 控制台输出配置 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
+        <encoder charset="utf-8">
             <pattern>
-                %d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %logger{0} %m%n
+                %d{yyyy-MM-dd HH:mm:ss} [%t:%r] %-5p %logger{0} %m%n
             </pattern>
         </encoder>
     </appender>
 
-    <appender name="LOG_FILE"
+    <!-- INFO 输出配置 -->
+    <appender name="INFO_FILE"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>C:\\AppServer\\logs\\room.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>C:\\AppServer\\logs\\room_%i.log
-            </FileNamePattern>
-            <MinIndex>1</MinIndex>
-            <MaxIndex>4</MaxIndex>
+        <File>${logger.logRoot}/dawning_info.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logger.logRoot}/dawning_info-%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>15</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
-        <triggeringPolicy
-                class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>10MB</MaxFileSize>
-        </triggeringPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t:%r] %-5p %logger{0} %m%n</Pattern>
+            <charset>UTF-8</charset>
         </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
     </appender>
 
-    <logger name="com.alisoft" level="INFO"/>
+    <!-- ERROR 输出配置 -->
+    <appender name="ERROR_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${logger.logRoot}/dawning_error.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logger.logRoot}/dawning_error-%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>15</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t:%r] %-5p %logger{0} %m%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
 
-    <root level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </root>
-
-    <!--system level,all disabled,can open when need-->
+    <!-- 第三方 jar 日志输出配置 -->
     <logger name="org.springframework" level="ERROR"/>
     <logger name="org.mybatis" level="ERROR"/>
     <logger name="org.apache" level="ERROR"/>
     <logger name="org.hibernate" level="ERROR"/>
     <logger name="org.jboss" level="ERROR"/>
     <logger name="com.alibaba" level="ERROR"/>
-    <!--disable log-->
-    <logger name="com.shinsoft.dao" level="DEBUG"/>
+    <logger name="io.springfox" level="ERROR"/>
+    <logger name="org.quartz" level="ERROR"/>
+    <logger name="springfox" level="ERROR"/>
+    <logger name="org.thymeleaf" level="ERROR"/>
+    <logger name="com.star.dao" level="DEBUG"/>
+
+    <!-- 日志输出适配器配置 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="INFO_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+
 </configuration>
