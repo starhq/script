@@ -24,12 +24,12 @@ redis_install(){
 	mkdir /etc/redis /var/lib/redis
 	cp src/redis-server src/redis-cli /usr/local/bin
 	sed -e "s/^daemonize no$/daemonize yes/" -e "s/^# bind 127.0.0.1$/bind 127.0.0.1/" -e "s/^dir \.\//dir \/var\/lib\/redis\//" -e "s/^loglevel verbose$/loglevel notice/" -e "s/^logfile stdout$/logfile \/var\/log\/redis.log/" redis.conf > /etc/redis/redis.conf
-	wget https://raw.githubusercontent.com/saxenap/install-redis-amazon-linux-centos/master/redis-server
+	wget https://raw.githubusercontent.com/starhq/script/master/redis-server
 	mv redis-server /etc/init.d
 	chmod 755 /etc/init.d/redis-server
 	chkconfig --add redis-server
 	chkconfig --level 345 redis-server on
-	service redis-server start
+	systemctl start redis-server 
 }
 
 redis-server -v  
@@ -48,7 +48,7 @@ mongod_install(){
 
 	yum install -y mongo-10gen mongo-10gen-server
 
-	service mongod start
+	systemctl start mongod 
 	chkconfig mongod on
 }
 
@@ -58,13 +58,13 @@ if [ $? -ne 0 ];then
 fi
 
 
-#install jdk1.8.0_60
+#install jdk1.8.0_162
 #need set url to choise new version of jdk
 jdk_install(){
 	chmod +x /tmp/jdk.rpm
 	yum -y localinstall /tmp/jdk.rpm
 	rm -f /tmp/jdk.rpm
-	sed -i '$a\JAVA_HOME=/usr/java/jdk1.8.0_60'/etc/profile
+	sed -i '$a\JAVA_HOME=/usr/java/jdk1.8.0_162'/etc/profile
 	sed -i '$a\JRE_HOME=$JAVA_HOME/jre' /etc/profile
 	sed -i '$a\PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin' /etc/profile
 	sed -i '$a\CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JRE_HOME/lib' /etc/profile
@@ -73,7 +73,7 @@ jdk_install(){
 }
   
 if [ ! -e /tmp/jdk.rpm ];then
-	wget -O /tmp/jdk.rpm --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.rpm"
+	wget -O /tmp/jdk.rpm --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1/jdk-8u162-linux-x64.rpm"
 	jdk_install
 else
 	jdk_install
@@ -145,6 +145,7 @@ mysql_install(){
 	systemctl enable mysqld.service
 	systemctl start mysqld.service
 	#systemctl status mysqld.service
+	grep 'temporary password' /var/log/mysqld.log
 	mysql_secure_installation
 	read -p "input your password" mysqlpass
 	mysql -uroot -p${mysqlpass} -e "
@@ -157,7 +158,7 @@ mysql_install(){
 	quit"
 }
 if [ ! -e /tmp/mysql.rpm ];then
-	wget -O /tmp/mysql.rpm http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
+	wget -O /tmp/mysql.rpm http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
 	mysql_install
 else
 	mysql_install
