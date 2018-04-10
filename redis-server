@@ -15,6 +15,9 @@
 . /etc/rc.d/init.d/functions
 
 # Source networking configuration.
+if [ ! -d /etc/sysconfig/network ]; then
+  mkdir -p /etc/sysconfig/network;
+fi
 . /etc/sysconfig/network
 
 # Check that networking is up.
