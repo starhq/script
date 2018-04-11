@@ -13,30 +13,6 @@ fi
 
 yum -y install gcc gcc-c++ make wget initscripts
 
-#install redis
-redis_install(){
-	cd /usr/local/src
-	wget http://download.redis.io/redis-stable.tar.gz
-	tar xzf redis-stable.tar.gz
-	rm redis-stable.tar.gz -f
-	cd redis-stable
-	make
-	mkdir /etc/redis /var/lib/redis
-	cp src/redis-server src/redis-cli /usr/local/bin
-	sed -e "s/^daemonize no$/daemonize yes/" -e "s/^# bind 127.0.0.1$/bind 127.0.0.1/" -e "s/^dir \.\//dir \/var\/lib\/redis\//" -e "s/^loglevel verbose$/loglevel notice/" -e "s/^logfile stdout$/logfile \/var\/log\/redis.log/" redis.conf > /etc/redis/redis.conf
-	wget https://raw.githubusercontent.com/starhq/script/master/redis-server
-	mv redis-server /etc/init.d
-	chmod 755 /etc/init.d/redis-server
-	chkconfig --add redis-server
-	chkconfig --level 345 redis-server on
-	systemctl start redis-server 
-}
-
-redis-server -v  
-if [ $? -ne 0 ];then
-	redis_install
-fi
-
 
 #install mongo
 mongod_install(){
@@ -80,16 +56,16 @@ else
 fi
 
 
-#install tomcat8.0
+#install tomcat8.5
 tomcat_install(){
 	cd /tmp
 	chmod +x tomcat.tar.gz
 	tar -zxvf tomcat.tar.gz
 	if [ -e "/usr/tomcat" ];then  
 		rm -rf /usr/tomcat
-		mv "apache-tomcat-8.0.46" /usr/tomcat
+		mv "apache-tomcat-8.5.29" /usr/tomcat
 	else
-		mv "apache-tomcat-8.0.46" /usr/tomcat
+		mv "apache-tomcat-8.5.29" /usr/tomcat
 	fi 
 	rm -f tomcat.tar.gz
 
@@ -99,7 +75,7 @@ tomcat_install(){
 		#add tomcat pid
 		CATALINA_PID=\$CATALINA_BASE/tomcat.pid
 		#add java opts
-		JAVA_OPTS="-server -XX:PermSize=256M -XX:MaxPermSize=1024m -Xms512M -Xmx1024M -XX:MaxNewSize=256m"
+		#JAVA_OPTS="-server -XX:PermSize=256M -XX:MaxPermSize=1024m -Xms512M -Xmx1024M #-XX:MaxNewSize=256m"
 EOF
 		chmod +x /usr/tomcat/bin/setenv.sh
 	fi
@@ -130,7 +106,7 @@ EOF
 }
 
 if [ ! -e /tmp/tomcat.tar.gz ];then
-	wget -O /tmp/tomcat.tar.gz "http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.0.46/bin/apache-tomcat-8.0.46.tar.gz"
+	wget -O /tmp/tomcat.tar.gz "http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.5.29/bin/apache-tomcat-8.5.29.tar.gz"
 	tomcat_install
 else
 	tomcat_install
@@ -162,4 +138,28 @@ if [ ! -e /tmp/mysql.rpm ];then
 	mysql_install
 else
 	mysql_install
+fi
+
+#install redis
+redis_install(){
+	cd /usr/local/src
+	wget http://download.redis.io/redis-stable.tar.gz
+	tar xzf redis-stable.tar.gz
+	rm redis-stable.tar.gz -f
+	cd redis-stable
+	make
+	mkdir /etc/redis /var/lib/redis
+	cp src/redis-server src/redis-cli /usr/local/bin
+	sed -e "s/^daemonize no$/daemonize yes/" -e "s/^# bind 127.0.0.1$/bind 127.0.0.1/" -e "s/^dir \.\//dir \/var\/lib\/redis\//" -e "s/^loglevel verbose$/loglevel notice/" -e "s/^logfile stdout$/logfile \/var\/log\/redis.log/" redis.conf > /etc/redis/redis.conf
+	wget https://raw.githubusercontent.com/starhq/script/master/redis-server
+	mv redis-server /etc/init.d
+	chmod 755 /etc/init.d/redis-server
+	chkconfig --add redis-server
+	chkconfig --level 345 redis-server on
+	systemctl start redis-server 
+}
+
+redis-server -v  
+if [ $? -ne 0 ];then
+	redis_install
 fi
